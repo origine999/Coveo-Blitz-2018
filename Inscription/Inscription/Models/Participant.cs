@@ -1,4 +1,6 @@
-﻿namespace Inscription.Models
+﻿using System;
+
+namespace Inscription.Models
 {
     public class Participant
     {
@@ -8,6 +10,6 @@ public string Email { get; set; }
 public string Phone { get; set; }
 public string School { get; set; }
 public string SchoolProgram { get; set; }
-public int GraduationDate { get; set; }
+public Int64 GraduationDate { get; set; }
 }
 }

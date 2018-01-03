@@ -19,7 +19,10 @@ namespace Inscription
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+                                    .UseKestrel()
+            .UseIISIntegration()
+            .UseStartup<Startup>()
+            .UseUrls("http://*:80")
                 .Build();
     }
 }

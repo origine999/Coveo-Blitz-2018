@@ -12,7 +12,7 @@ namespace Inscription.Controllers
     {
         private const string school = "Université de Sherbrooke";
         private const string schoolProgram = "Génie Informatique";
-        private const int gradEpoch = 1544961600;
+        private const Int64 gradEpoch = 1544961600000;
 
         //[HttpGet]
         //public InscriptionOutput Get(/*[FromBody]InscriptionInput input*/)
@@ -28,6 +28,12 @@ namespace Inscription.Controllers
         //        }
         //    });
         //}
+
+            [HttpGet]
+            public ActionResult Get()
+        {
+            return Ok("I'm alive");
+        }
 
         [HttpPost]
         public InscriptionOutput Post([FromBody]InscriptionInput input)
@@ -45,10 +51,40 @@ namespace Inscription.Controllers
                         School = school,
                         SchoolProgram = schoolProgram,
                         GraduationDate = gradEpoch
+                    },
+                    new Participant
+                    {
+                        IsCaptain = false,
+                        FullName = "Marc-André Frenette",
+                        Email = "frem2110@usherbrooke.ca",
+                        Phone = "8199441181",
+                        School = school,
+                        SchoolProgram = schoolProgram,
+                        GraduationDate = gradEpoch
+                    },
+                    new Participant
+                    {
+                        IsCaptain = false,
+                        FullName = "Jérôme Godin",
+                        Email = "jerome.godin@usherbrooke.ca",
+                        Phone = "8196744523",
+                        School = school,
+                        SchoolProgram = schoolProgram,
+                        GraduationDate = gradEpoch
+                    },
+                    new Participant
+                    {
+                        IsCaptain = false,
+                        FullName = "Valentin Libioulle",
+                        Email = "Valentin.libioulle@usherbrooke.ca",
+                        Phone = "581995218p",
+                        School = school,
+                        SchoolProgram = schoolProgram,
+                        GraduationDate = gradEpoch
                     }
                 },
                 Solution = input.Shapes.Where(l => l.Max() < (l.Sum() - l.Max())).Count(),
-                TeamName = ""
+                TeamName = "Keep Summer Safe"
             };
         }
     }
