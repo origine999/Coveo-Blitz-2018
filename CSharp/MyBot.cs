@@ -129,23 +129,45 @@ public class MyBot
         };
     }
 
-    public Direction GetDirectionToTargetLongestAxis(Location nsource, Location destination)
+    public Direction GetDirectionToTargetLongestAxis(Location source, Location destination)
     {
-        throw new NotImplementedException();
+        int[] distances = GetShortestDistances(source, destination);
+        if(distances[0] > distances[1])
+        {
+            if(getWithinBounds((int)destination.X - (int)source.X, map.Width) == distances[0])
+            {
+                return Direction.East;
+            }
+            else
+            {
+                return Direction.West;
+            }
+        }
+        else
+        {
+            if (getWithinBounds((int)destination.Y - (int)source.Y, map.Height) == distances[1])
+            {
+                return Direction.South;
+            }
+            else
+            {
+                return Direction.North;
+            }
+        }
     }
 
     public int[] GetShortestDistances(Location source, Location destination)
     {
         return new int[]
         {
-
+            GetShortestDistance(getWithinBounds((int)destination.X - (int)source.X, map.Width), map.Width),
+            GetShortestDistance(getWithinBounds((int)destination.Y - (int)source.Y, map.Height), map.Height)
         };
     }
 
     public int DistanceManhattan(Location source, Location destination)
     {
-        return GetShortestDistance(getWithinBounds((int)destination.X - (int)source.X, map.Width), map.Width) +
-            GetShortestDistance(getWithinBounds((int)destination.Y - (int)source.Y, map.Height), map.Height);
+        return GetShortestDistances(source, destination).Sum();
     }
 
     public int GetShortestDistance(int distance, int max)
