@@ -120,6 +120,16 @@ public class MyBot
         {
             miners.Add(new Location { X = x, Y = y });
         }
+
+        foreach(var miner in miners)
+        {
+            if (neighbours.Any(n => warriors.Contains(n.Location)))
+            {
+                Location myLoc = new Location { X = x, Y = y };
+                helpers.Add(myLoc);
+                miners.Remove(myLoc);
+            }
+        }
     }
 
     public List<Neighbour> GetImmediateNeighbours(ushort x, ushort y)
