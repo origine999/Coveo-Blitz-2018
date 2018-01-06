@@ -16,7 +16,7 @@ public class MyBot
     public List<Location> neutrals = new List<Location>();
     public List<Location> enemies = new List<Location>();
 
-    public ushort treshold = 25;
+    public ushort treshold = 20;
     
     public static void Main(string[] args) {
         //Log.Setup(@"C:\Users\phili\Desktop\Coveo-Blitz-2018\CSharp\log.txt");
@@ -78,7 +78,7 @@ public class MyBot
         foreach (var helper in helpers)
         {
             Neighbour warrior = GetImmediateNeighbours(helper).Where(n => warriors.Contains(n.Location)).First();
-            if (map[helper].Strength >= map[helper].Production * 2)
+            if (map[helper].Strength >= treshold)
             {
                 moves.Add(new Move
                 {
@@ -98,7 +98,7 @@ public class MyBot
 
         foreach (var miner in miners)
         {
-            if (map[miner].Strength >= map[miner].Production * 3)
+            if (map[miner].Strength >= treshold)
             {
                 Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).First();
 
