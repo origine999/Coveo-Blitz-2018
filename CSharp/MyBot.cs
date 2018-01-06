@@ -57,20 +57,8 @@ public class MyBot
     public List<Move> ComputeMove(out List<Move> moves)
     {
         moves = new List<Move>();
-        warriors.Clear();
-        helpers.Clear();
-        miners.Clear();
-        
-        for (ushort x = 0; x < map.Width; x++)
-        {
-            for (ushort y = 0; y < map.Height; y++)
-            {
-                if (map[x, y].Owner == myID)
-                {
-                    AssignUnitToList(x, y);
-                }
-            }
-        }
+
+        AssignLists();
 
         foreach (var warrior in warriors)
         {
@@ -129,7 +117,40 @@ public class MyBot
         return moves;
     }
 
-    public void AssignUnitToList(ushort x, ushort y)
+    public void AssignLists()
+    {
+        warriors.Clear();
+        helpers.Clear();
+        miners.Clear();
+
+        for (ushort x = 0; x < map.Width; x++)
+        {
+            for (ushort y = 0; y < map.Height; y++)
+            {
+                if (map[x, y].Owner == myID)
+                {
+                    WarriorOrMiner(x, y);
+                }
+            }
+        }
+
+        List<Location> minersToDelete = new List<Location>();
+        foreach (var miner in miners)
+        {
+            if (GetImmediateNeighbours(miner.X, miner.Y).Any(n => warriors.Contains(n.Location)))
+            {
+                helpers.Add(miner);
+                minersToDelete.Add(miner);
+            }
+        }
+
+        foreach (var miner in minersToDelete)
+        {
+            miners.Remove(miner);
+        }
+    }
+
+    public void WarriorOrMiner(ushort x, ushort y)
     {
         List<Neighbour> neighbours = GetImmediateNeighbours(x, y);
 
@@ -142,15 +163,7 @@ public class MyBot
             miners.Add(new Location { X = x, Y = y });
         }
 
-        foreach(var miner in miners)
-        {
-            if (neighbours.Any(n => warriors.Contains(n.Location)))
-            {
-                Location myLoc = new Location { X = x, Y = y };
-                helpers.Add(myLoc);
-                miners.Remove(myLoc);
-            }
-        }
+        
     }
 
     public List<Neighbour> GetImmediateNeighbours(Location location)
