@@ -5,12 +5,16 @@ using System.Linq;
 public class MyBot
 {
     public const string MyBotName = "Keep Summer Safe";
+    public const ushort NeutralID = 0;
     public ushort myID;
     public Map map;
 
     public List<Location> warriors = new List<Location>();
     public List<Location> helpers = new List<Location>();
     public List<Location> miners = new List<Location>();
+
+    public List<Location> neutrals = new List<Location>();
+    public List<Location> enemies = new List<Location>();
 
     public ushort treshold = 25;
     
@@ -122,6 +126,8 @@ public class MyBot
         warriors.Clear();
         helpers.Clear();
         miners.Clear();
+        neutrals.Clear();
+        enemies.Clear();
 
         for (ushort x = 0; x < map.Width; x++)
         {
@@ -130,6 +136,14 @@ public class MyBot
                 if (map[x, y].Owner == myID)
                 {
                     WarriorOrMiner(x, y);
+                }
+                else if (map[x, y].Owner != NeutralID)
+                {
+                    enemies.Add(new Location { X = x, Y = y });
+                }
+                else if (map[x, y].Production != 0)
+                {
+                    neutrals.Add(new Location { X = x, Y = y });
                 }
             }
         }
