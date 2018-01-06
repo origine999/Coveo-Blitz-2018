@@ -77,7 +77,7 @@ public class MyBot
 
         foreach (var warrior in warriors)
         {
-            Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).FirstOrDefault();
+            Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).ThenBy(n => random.Next(100)).FirstOrDefault();
             if (target != null)
             {
                 moves.Add(new Move
@@ -109,8 +109,8 @@ public class MyBot
 
             foreach (var nextWarrior in warriorNeighbour)
             {
-                Neighbour bestMe = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).FirstOrDefault();
-                Neighbour bestHim = GetImmediateNeighbours(nextWarrior.Location).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).FirstOrDefault();
+                Neighbour bestMe = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).ThenBy(n => random.Next(100)).FirstOrDefault();
+                Neighbour bestHim = GetImmediateNeighbours(nextWarrior.Location).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).ThenBy(n => random.Next(100)).FirstOrDefault();
 
                 if (bestMe != null && bestMe.Tile.Production > bestProd)
                 {
