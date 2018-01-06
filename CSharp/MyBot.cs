@@ -129,9 +129,29 @@ public class MyBot
         };
     }
 
-    public ushort DistanceManhattan(Location source, Location destination)
+    public int DistanceManhattan(Location source, Location destination)
     {
-        return 0;
+        return GetShortestDistance(getWithinBounds((int)destination.X - (int)source.X, map.Width), map.Width) +
+            GetShortestDistance(getWithinBounds((int)destination.Y - (int)source.Y, map.Height), map.Height);
+    }
+
+    public int GetShortestDistance(int distance, int max)
+    {
+        return Math.Min(distance, max - distance);
+    }
+
+    public int getWithinBounds(int num, int max)
+    {
+        var tmp = num;
+        while(tmp < 0)
+        {
+            tmp += max;
+        }
+        while(tmp >= max)
+        {
+            tmp -= max;
+        }
+        return tmp;
     }
 
     public class Neighbour
