@@ -69,12 +69,16 @@ public class MyBot
 
     public List<Neighbour> GetImmediateNeighbours(ushort x, ushort y)
     {
-        return null;
+        return new List<Neighbour>
+        {
+
+        };
     }
 
     public class Neighbour
     {
-        public Site tile { get; set; }
-        public Direction whereIsThatNeighbour { get; set; }
+        public Site Tile { get; set; }
+        public Location Location { get; set; }
+        public Direction WhereIsThatNeighbour { get; set; }
     }
 }
