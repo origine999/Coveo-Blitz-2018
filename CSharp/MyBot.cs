@@ -77,7 +77,7 @@ public class MyBot
         foreach (var helper in helpers)
         {
             Neighbour warrior = GetImmediateNeighbours(helper).Where(n => warriors.Contains(n.Location)).First();
-            if (map[helper].Strength >= treshold)
+            if (map[helper].Strength >= treshold || map[helper].Production == 0)
             {
                 moves.Add(new Move
                 {
@@ -97,7 +97,7 @@ public class MyBot
 
         foreach (var miner in miners)
         {
-            if (map[miner].Strength >= treshold)
+            if (map[miner].Strength >= treshold || map[miner].Production == 0)
             {
                 Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).FirstOrDefault();
                     
