@@ -9,10 +9,6 @@ public class MyBot
     public ushort myID;
     public Map map;
 
-    public Location productionTarget;
-
-    public static ushort[,] productionMap;
-
     public List<Location> warriors = new List<Location>();
     public List<Location> helpers = new List<Location>();
     public List<Location> miners = new List<Location>();
@@ -31,8 +27,6 @@ public class MyBot
         Map map = Networking.getInit(out myID);
         MyBot bot = new MyBot(myID);
         bot.map = map;
-
-        productionMap = new ushort[map.Width, map.Height];
 
         /* ------
             Do more prep work, see rules for time limit
@@ -61,13 +55,6 @@ public class MyBot
 
     public void Analyze()
     {
-        for (ushort x = 0; x < map.Width; x++)
-        {
-            for (ushort y = 0; y < map.Height; y++)
-            {
-                productionMap[x, y] = map[x, y].Production;
-            }
-        }
     }
 
     public List<Move> ComputeMove(out List<Move> moves)
@@ -112,24 +99,13 @@ public class MyBot
         {
             if (map[miner].Strength >= treshold)
             {
-                if (map[productionTarget].Owner != myID)
+                Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).FirstOrDefault();
+                    
+                moves.Add(new Move
                 {
-                    moves.Add(new Move
-                    {
-                        Location = miner,
-                        Direction = GetDirectionToTargetLongestAxis(miner, productionTarget)
-                    });
-                }
-                else
-                {
-                    Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).First();
-
-                    moves.Add(new Move
-                    {
-                        Location = miner,
-                        Direction = GetDirectionToTargetLongestAxis(miner, target)
-                    });
-                }
+                    Location = miner,
+                    Direction = GetDirectionToTargetLongestAxis(miner, target)
+                });
             }
             else
             {
@@ -156,7 +132,6 @@ public class MyBot
         {
             for (ushort y = 0; y < map.Height; y++)
             {
-                UpdateProductionMap(x, y);
                 if (map[x, y].Owner == myID)
                 {
                     WarriorOrMiner(x, y);
@@ -185,18 +160,6 @@ public class MyBot
         foreach (var miner in minersToDelete)
         {
             miners.Remove(miner);
-        }
-    }
-
-    public void UpdateProductionMap(ushort x, ushort y)
-    {
-        if (map[x,y].Production > productionMap[x,y])
-        {
-            productionMap[x, y] = map[x, y].Production;
-            if (productionMap[x, y] > map[productionTarget].Production)
-            {
-                productionTarget = new Location { X = x, Y = y };
-            }
         }
     }
 
