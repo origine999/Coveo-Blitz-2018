@@ -135,6 +135,11 @@ public class MyBot
         };
     }
 
+    public ushort DistanceManhattan(Location source, Location destination)
+    {
+        return 0;
+    }
+
     public class Neighbour
     {
         public Site Tile { get; set; }
