@@ -66,4 +66,15 @@ public class MyBot
 
         return moves;
     }
+
+    public List<Neighbour> GetImmediateNeighbours(ushort x, ushort y)
+    {
+        return null;
+    }
+
+    public class Neighbour
+    {
+        public Site tile { get; set; }
+        public Direction whereIsThatNeighbour { get; set; }
+    }
 }
