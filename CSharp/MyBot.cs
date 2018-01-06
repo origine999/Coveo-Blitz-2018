@@ -8,14 +8,14 @@ public class MyBot
     public ushort myID;
     public Map map;
 
-    public List<Location> warriors;
-    public List<Location> helpers;
-    public List<Location> miners;
+    public List<Location> warriors = new List<Location>();
+    public List<Location> helpers = new List<Location>();
+    public List<Location> miners = new List<Location>();
 
     public ushort treshold = 25;
     
     public static void Main(string[] args) {
-        Log.Setup("log.txt");
+        //Log.Setup(@"C:\Users\phili\Desktop\Coveo-Blitz-2018\CSharp\log.txt");
 
         Console.SetIn(Console.In);
         Console.SetOut(Console.Out);
@@ -75,8 +75,6 @@ public class MyBot
         foreach (var warrior in warriors)
         {
             Neighbour target = GetImmediateNeighbours(warrior.X, warrior.Y).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
-
-
 
             moves.Add(new Move
             {
