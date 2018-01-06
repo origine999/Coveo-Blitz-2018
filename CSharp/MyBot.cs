@@ -4,7 +4,7 @@ using System.Linq;
 
 public class MyBot
 {
-    public const string MyBotName = "MyC#Bot";
+    public const string MyBotName = "Keep Summer Safe";
 
     public static void Main(string[] args) {
         Console.SetIn(Console.In);
