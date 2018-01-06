@@ -1,0 +1,6 @@
+C:\gitrepos\Coveo-Blitz-2018\CSharp\obj\Debug\Blitz2k18.csprojResolveAssemblyReference.cache
+C:\gitrepos\Coveo-Blitz-2018\CSharp\obj\Debug\Blitz2k18.csproj.CoreCompileInputs.cache
+C:\gitrepos\Coveo-Blitz-2018\CSharp\bin\Debug\Blitz2k18.exe
+C:\gitrepos\Coveo-Blitz-2018\CSharp\bin\Debug\Blitz2k18.pdb
+C:\gitrepos\Coveo-Blitz-2018\CSharp\obj\Debug\Blitz2k18.exe
+C:\gitrepos\Coveo-Blitz-2018\CSharp\obj\Debug\Blitz2k18.pdb
