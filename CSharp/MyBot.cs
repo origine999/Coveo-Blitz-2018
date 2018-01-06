@@ -7,8 +7,16 @@ public class MyBot
     public const string MyBotName = "Keep Summer Safe";
     public ushort myID;
     public Map map;
+
+    public List<Location> warriors;
+    public List<Location> helpers;
+    public List<Location> miners;
+
+    public ushort treshold = 25;
     
     public static void Main(string[] args) {
+        Log.Setup("log.txt");
+
         Console.SetIn(Console.In);
         Console.SetOut(Console.Out);
         ushort myID;
@@ -19,7 +27,7 @@ public class MyBot
         /* ------
             Do more prep work, see rules for time limit
         ------ */
-        bot.Analyze(ref map);
+        bot.Analyze();
 
         Networking.SendInit(MyBotName); // Acknoweldge the init and begin the game
 
@@ -29,7 +37,7 @@ public class MyBot
             bot.map = map;
 
             List<Move> moves;
-            bot.ComputeMove(ref map, out moves);
+            bot.ComputeMove(out moves);
 
             Networking.SendMoves(moves); // Send moves
         }
@@ -41,45 +49,79 @@ public class MyBot
         this.myID = myID;
     }
 
-    public void Analyze(ref Map map)
+    public void Analyze()
     {
 
     }
 
-    public List<Move> ComputeMove(ref Map map, out List<Move> moves)
+    public List<Move> ComputeMove(out List<Move> moves)
     {
         moves = new List<Move>();
-        moves.Clear();
-
+        warriors.Clear();
+        helpers.Clear();
+        miners.Clear();
+        
         for (ushort x = 0; x < map.Width; x++)
         {
             for (ushort y = 0; y < map.Height; y++)
             {
                 if (map[x, y].Owner == myID)
                 {
-                    List<Neighbour> neighbours = GetImmediateNeighbours(x, y);
-                    ushort bestProduction = 0;
-                    Direction bestDirection = Direction.Still;
-
-                    foreach (Neighbour neighbour in neighbours)
-                    {
-                        if (neighbour.Tile.Owner != myID && neighbour.Tile.Strength < map[x,y].Strength && neighbour.Tile.Production > bestProduction)
-                        {
-                            bestProduction = neighbour.Tile.Production;
-                            bestDirection = neighbour.WhereIsThatNeighbour;
-                        }
-                    }
-
-                    moves.Add(new Move
-                    {
-                        Location = new Location { X = x, Y = y },
-                        Direction = bestDirection
-                    });
+                    AssignUnitToList(x, y);
                 }
+            }
+        }
+        
+        foreach (var warrior in warriors)
+        {
+            Neighbour target = GetImmediateNeighbours(warrior.X, warrior.Y).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
+
+
+
+            moves.Add(new Move
+            {
+                Location = warrior,
+                Direction = target?.WhereIsThatNeighbour ?? Direction.Still
+            });
+        }
+
+        foreach (var miner in miners)
+        {
+            if (map[miner].Strength >= treshold)
+            {
+                Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).First();
+
+                moves.Add(new Move
+                {
+                    Location = miner,
+                    Direction = GetDirectionToTargetLongestAxis(miner, target)
+                });
+            }
+            else
+            {
+                moves.Add(new Move
+                {
+                    Location = miner,
+                    Direction = Direction.Still
+                });
             }
         }
 
         return moves;
+    }
+
+    public void AssignUnitToList(ushort x, ushort y)
+    {
+        List<Neighbour> neighbours = GetImmediateNeighbours(x, y);
+
+        if (neighbours.Any(s => s.Tile.Owner != myID))
+        {
+            warriors.Add(new Location { X = x, Y = y });
+        }
+        else
+        {
+            miners.Add(new Location { X = x, Y = y });
+        }
     }
 
     public List<Neighbour> GetImmediateNeighbours(ushort x, ushort y)
