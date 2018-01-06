@@ -4,7 +4,7 @@ using System.Linq;
 
 public class MyBot
 {
-    public const string MyBotName = "Keep Summer Safe";
+    public const string MyBotName = "Keep Summer Safe Ratio";
     public const ushort NeutralID = 0;
     public ushort myID;
     public Map map;
@@ -16,7 +16,7 @@ public class MyBot
     public List<Location> neutrals = new List<Location>();
     public List<Location> enemies = new List<Location>();
 
-    public ushort treshold = 20;
+    //public ushort treshold = 20;
     
     public static void Main(string[] args) {
         //Log.Setup(@"C:\Users\phili\Desktop\Coveo-Blitz-2018\CSharp\log.txt");
@@ -65,7 +65,7 @@ public class MyBot
 
         foreach (var warrior in warriors)
         {
-            Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
+            Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => (n.Tile.Production * 1000 / (n.Tile.Strength + 1))).FirstOrDefault();
 
             moves.Add(new Move
             {
@@ -76,6 +76,8 @@ public class MyBot
 
         foreach (var helper in helpers)
         {
+            ushort treshold = map[helper].Production <= 6 ? (ushort)20 : (ushort)(map[helper].Production * 7);
+
             Neighbour warrior = GetImmediateNeighbours(helper).Where(n => warriors.Contains(n.Location)).First();
             if (map[helper].Strength >= treshold || map[helper].Production == 0)
             {
@@ -97,6 +99,8 @@ public class MyBot
 
         foreach (var miner in miners)
         {
+            ushort treshold = map[miner].Production <= 6 ? (ushort)20 : (ushort)(map[miner].Production * 7);
+
             if (map[miner].Strength >= treshold || map[miner].Production == 0)
             {
                 Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).FirstOrDefault();
