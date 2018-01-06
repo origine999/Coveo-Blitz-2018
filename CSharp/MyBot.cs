@@ -63,17 +63,101 @@ public class MyBot
 
         AssignLists();
 
+        ComputeWarriorsMove(ref moves);
+        ComputeHelpersMove(ref moves);
+        ComputeMinerMove(ref moves);
+        
+        return moves;
+    }
+
+    public void ComputeWarriorsMove(ref List<Move> moves)
+    {
+        List<Location> pendingWarriors = new List<Location>();
+
         foreach (var warrior in warriors)
         {
             Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
-
-            moves.Add(new Move
+            if (target != null)
             {
-                Location = warrior,
-                Direction = target?.WhereIsThatNeighbour ?? Direction.Still
-            });
+                moves.Add(new Move
+                {
+                    Location = warrior,
+                    Direction = target.WhereIsThatNeighbour
+                });
+            }
+            else
+            {
+                pendingWarriors.Add(warrior);
+            }
         }
 
+        HashSet<Location> usedWarriors = new HashSet<Location>();
+
+        foreach (var warrior in pendingWarriors)
+        {
+            if (usedWarriors.Contains(warrior))
+            {
+                continue;
+            }
+
+            IEnumerable<Neighbour> warriorNeighbour = GetImmediateNeighbours(warrior).Where(n => pendingWarriors.Contains(n.Location) && usedWarriors.Contains(n.Location));
+
+            Location bestFrom = new Location();
+            Location bestTo = new Location();
+            ushort bestProd = 0;
+            bool matchFound = false;
+
+            foreach (var nextWarrior in warriorNeighbour)
+            {
+                Neighbour bestMe = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
+                Neighbour bestHim = GetImmediateNeighbours(nextWarrior.Location).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength + nextWarrior.Tile.Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
+
+                if (bestMe != null && bestMe.Tile.Production > bestProd)
+                {
+                    bestTo = warrior;
+                    bestFrom = nextWarrior.Location;
+                    bestProd = bestMe.Tile.Production;
+                    matchFound = true;
+                }
+
+                if (bestHim != null && bestHim.Tile.Production > bestProd)
+                {
+                    bestFrom = warrior;
+                    bestTo = nextWarrior.Location;
+                    bestProd = bestHim.Tile.Production;
+                    matchFound = true;
+                }
+            }
+
+            if (!matchFound)
+            {
+                moves.Add(new Move
+                {
+                    Location = warrior,
+                    Direction = Direction.Still
+                });
+                usedWarriors.Add(warrior);
+            }
+            else
+            {
+                moves.Add(new Move
+                {
+                    Location = bestTo,
+                    Direction = Direction.Still
+                });
+                usedWarriors.Add(bestTo);
+                moves.Add(new Move
+                {
+                    Location = bestFrom,
+                    Direction = GetDirectionToTargetLongestAxis(bestFrom, bestTo)
+                });
+                usedWarriors.Add(bestFrom);
+            }
+        }
+    }
+
+    public void ComputeHelpersMove(ref List<Move> moves)
+    {
         foreach (var helper in helpers)
         {
             Neighbour warrior = GetImmediateNeighbours(helper).Where(n => warriors.Contains(n.Location)).First();
@@ -95,12 +179,16 @@ public class MyBot
             }
         }
 
+    }
+
+    public void ComputeMinerMove(ref List<Move> moves)
+    {
         foreach (var miner in miners)
         {
             if (map[miner].Strength >= treshold)
             {
                 Location target = warriors.OrderBy(n => DistanceManhattan(miner, n)).FirstOrDefault();
-                    
+
                 moves.Add(new Move
                 {
                     Location = miner,
@@ -117,7 +205,6 @@ public class MyBot
             }
         }
 
-        return moves;
     }
 
     public void AssignLists()
