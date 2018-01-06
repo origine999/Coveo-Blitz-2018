@@ -92,7 +92,46 @@ public class MyBot
     {
         return new List<Neighbour>
         {
-
+            new Neighbour
+            {
+                Location = new Location
+                {
+                    X = (ushort) (((x + map.Width) - 1) % map.Width),
+                    Y = y
+                },
+                Tile = map[(ushort) (((x + map.Width) - 1) % map.Width), y],
+                WhereIsThatNeighbour = Direction.West
+            },
+            new Neighbour
+            {
+                Location = new Location
+                {
+                    X = (ushort) (((x) + 1) % map.Width),
+                    Y = y
+                },
+                Tile = map[(ushort) (((x) + 1) % map.Width), y],
+                WhereIsThatNeighbour = Direction.East
+            },
+            new Neighbour
+            {
+                Location = new Location
+                {
+                    X = x,
+                    Y = (ushort) (((y + map.Height) - 1) % map.Height)
+                },
+                Tile = map[x, (ushort) (((y + map.Height) - 1) % map.Height)],
+                WhereIsThatNeighbour = Direction.North
+            },
+            new Neighbour
+            {
+                Location = new Location
+                {
+                    X = x,
+                    Y = (ushort) (((y) + 1) % map.Height)
+                },
+                Tile = map[x, (ushort) (((y) + 1) % map.Height)],
+                WhereIsThatNeighbour = Direction.South
+            }
         };
     }
 
