@@ -6,14 +6,15 @@ public class MyBot
 {
     public const string MyBotName = "Keep Summer Safe";
     public ushort myID;
-    public List<Move> moves;
-
+    public Map map;
+    
     public static void Main(string[] args) {
         Console.SetIn(Console.In);
         Console.SetOut(Console.Out);
         ushort myID;
         Map map = Networking.getInit(out myID);
         MyBot bot = new MyBot(myID);
+        bot.map = map;
 
         /* ------
             Do more prep work, see rules for time limit
@@ -25,8 +26,10 @@ public class MyBot
         while (true)
         {
             Networking.getFrame(ref map); // Update the map to reflect the moves before this turn
+            bot.map = map;
 
-            var moves = bot.ComputeMove(ref map);
+            List<Move> moves;
+            bot.ComputeMove(ref map, out moves);
 
             Networking.SendMoves(moves); // Send moves
         }
@@ -36,7 +39,6 @@ public class MyBot
     public MyBot(ushort myID)
     {
         this.myID = myID;
-        moves = new List<Move>();
     }
 
     public void Analyze(ref Map map)
@@ -44,21 +46,24 @@ public class MyBot
 
     }
 
-    public List<Move> ComputeMove(ref Map map)
+    public List<Move> ComputeMove(ref Map map, out List<Move> moves)
     {
+        moves = new List<Move>();
         moves.Clear();
-        var random = new Random();
-        
+
         for (ushort x = 0; x < map.Width; x++)
         {
             for (ushort y = 0; y < map.Height; y++)
             {
                 if (map[x, y].Owner == myID)
                 {
+                    List<Neighbour> neighbours = GetImmediateNeighbours(x, y);
+
+
                     moves.Add(new Move
                     {
                         Location = new Location { X = x, Y = y },
-                        Direction = (Direction)random.Next(5)
+                        Direction = Direction.Still
                     });
                 }
             }
