@@ -58,29 +58,23 @@ public class MyBot
                 if (map[x, y].Owner == myID)
                 {
                     List<Neighbour> neighbours = GetImmediateNeighbours(x, y);
-                    bool moved = false;
+                    ushort bestProduction = 0;
+                    Direction bestDirection = Direction.Still;
+
                     foreach (Neighbour neighbour in neighbours)
                     {
-                        if (neighbour.Tile.Owner != myID && neighbour.Tile.Strength < map[x,y].Strength)
+                        if (neighbour.Tile.Owner != myID && neighbour.Tile.Strength < map[x,y].Strength && neighbour.Tile.Production > bestProduction)
                         {
-                            moves.Add(new Move
-                            {
-                                Location = new Location { X = x, Y = y },
-                                Direction = neighbour.WhereIsThatNeighbour
-                            });
-                            moved = true;
-                            break;
+                            bestProduction = neighbour.Tile.Production;
+                            bestDirection = neighbour.WhereIsThatNeighbour;
                         }
                     }
 
-                    if (!moved)
+                    moves.Add(new Move
                     {
-                        moves.Add(new Move
-                        {
-                            Location = new Location { X = x, Y = y },
-                            Direction = Direction.Still
-                        });
-                    }
+                        Location = new Location { X = x, Y = y },
+                        Direction = bestDirection
+                    });
                 }
             }
         }
