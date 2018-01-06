@@ -71,16 +71,37 @@ public class MyBot
                 }
             }
         }
-        
+
         foreach (var warrior in warriors)
         {
-            Neighbour target = GetImmediateNeighbours(warrior.X, warrior.Y).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
+            Neighbour target = GetImmediateNeighbours(warrior).Where(n => n.Tile.Owner != myID && n.Tile.Strength < map[warrior].Strength).OrderByDescending(n => n.Tile.Production).FirstOrDefault();
 
             moves.Add(new Move
             {
                 Location = warrior,
                 Direction = target?.WhereIsThatNeighbour ?? Direction.Still
             });
+        }
+
+        foreach (var helper in helpers)
+        {
+            Neighbour warrior = GetImmediateNeighbours(helper).Where(n => warriors.Contains(n.Location)).First();
+            if (map[helper].Strength >= treshold)
+            {
+                moves.Add(new Move
+                {
+                    Location = helper,
+                    Direction = GetDirectionToTargetLongestAxis(helper, warrior.Location)
+                });
+            }
+            else
+            {
+                moves.Add(new Move
+                {
+                    Location = helper,
+                    Direction = Direction.Still
+                });
+            }
         }
 
         foreach (var miner in miners)
@@ -130,6 +151,11 @@ public class MyBot
                 miners.Remove(myLoc);
             }
         }
+    }
+
+    public List<Neighbour> GetImmediateNeighbours(Location location)
+    {
+        return GetImmediateNeighbours(location.X, location.Y);
     }
 
     public List<Neighbour> GetImmediateNeighbours(ushort x, ushort y)
