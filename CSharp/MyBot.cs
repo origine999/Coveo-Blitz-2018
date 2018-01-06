@@ -129,6 +129,19 @@ public class MyBot
         };
     }
 
+    public Direction GetDirectionToTargetLongestAxis(Location nsource, Location destination)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int[] GetShortestDistances(Location source, Location destination)
+    {
+        return new int[]
+        {
+
+        };
+    }
+
     public int DistanceManhattan(Location source, Location destination)
     {
         return GetShortestDistance(getWithinBounds((int)destination.X - (int)source.X, map.Width), map.Width) +
