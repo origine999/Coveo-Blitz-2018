@@ -4,7 +4,8 @@ using System.Linq;
 
 public class MyBot
 {
-    public const string MyBotName = "Keep Summer Safe Ratio";
+    public static Random random = new Random();
+    public const string MyBotName = "Keep Summer Safe";
     public const ushort NeutralID = 0;
     public ushort myID;
     public Map map;
